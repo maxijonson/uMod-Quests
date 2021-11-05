@@ -9,33 +9,12 @@ using Oxide.Core.Plugins;
 using Oxide.Game.Rust.Cui;
 using UnityEngine;
 
-/* 
-    2.4.0
-    Fix for quest creator using betterchat (input now not longer shown in global chat)
-    Add tunneldwellder to kill quests
-    Removed quest edit/deletion pages
-    Added new edit and delete button in quest overview for admins / players with perm quests.manage
-    Fix some button sizes
-    Fix reward claim if inventory is full
-    Add Possibility to set a max of active quests for a player
-    Fix wipePlayerProgress command
-
-    2.3.5
-    Fix for scientist kills not counted
-    Fix quest creator when using colored messages
-
-    2.3.4:
-    Fixed error which occurs when only one NPC is registered as delivery NPC
-    Added possibility to disable isAdmin and use Oxide permissions system
-    Add command to wipe PlayerProgress (wipePlayerProgress)
-*/
-
 // ToDo: ZLevels integration (waiting for ZLevels api implementation)
 // ToDo: Add Cooldown option for Delivery
 
 namespace Oxide.Plugins
 {
-    [Info("Quests", "Gonzi", "2.4.0")]
+    [Info("Quests", "Gonzi", "2.4.1")]
     [Description("Creates quests for players to go on to earn rewards, complete with a GUI menu")]
     public class Quests : RustPlugin
     {
@@ -842,7 +821,10 @@ namespace Oxide.Plugins
                 "player",
                 "scientist",
                 "murderer",
-                "tunneldwellder"
+                "tunneldweller",
+                "underwaterdweller",
+                "scarecrow",
+                "simpleshark"
             };
             DisplayNames.Add("bear", "Bear");
             DisplayNames.Add("boar", "Boar");
@@ -856,7 +838,10 @@ namespace Oxide.Plugins
             DisplayNames.Add("player", "Player");
             DisplayNames.Add("scientist", "Scientist");
             DisplayNames.Add("murderer", "Murderer");
-            DisplayNames.Add("tunneldwellder", "Tunneldwellder");
+            DisplayNames.Add("tunneldweller", "Tunneldweller");
+            DisplayNames.Add("underwaterdweller", "Underwater Dweller");
+            DisplayNames.Add("scarecrow", "Scarecrow");
+            DisplayNames.Add("simpleshark", "Shark");
         }
 
         #endregion
