@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("Quests", "Gonzi", "2.4.1")]
+    [Info("Quests", "Gonzi", "2.4.2")]
     [Description("Creates quests for players to go on to earn rewards, complete with a GUI menu")]
     public class Quests : RustPlugin
     {
@@ -396,11 +396,12 @@ namespace Oxide.Plugins
                     ProcessProgress(player, QuestType.Gather, item.info.shortname, item.amount);
         }
 
-        void OnCollectiblePickup(Item item, BasePlayer player)
+        void OnCollectiblePickup(CollectibleEntity collectible, BasePlayer player)
         {
             if (player != null)
-                if (hasQuests(player.userID) && isQuestItem(player.userID, item.info.shortname, QuestType.Gather))
-                    ProcessProgress(player, QuestType.Gather, item.info.shortname, item.amount);
+                foreach (ItemAmount itemAmount in collectible.itemList)
+                    if (hasQuests(player.userID) && isQuestItem(player.userID, itemAmount.itemDef.shortname, QuestType.Gather))
+                        ProcessProgress(player, QuestType.Gather, itemAmount.itemDef.shortname, (int)itemAmount.amount);
         }
 
         //Craft
