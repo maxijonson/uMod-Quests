@@ -1,0 +1,1 @@
+This is my own version of the Quests mod for Rust. It contains some personal modifications, modifications to work with other mods I use (ZombieHorde) as well as fixes to some bugs I've already opened a PR for.
