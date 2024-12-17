@@ -823,7 +823,8 @@ namespace Oxide.Plugins
                 "npc_tunneldweller",
                 "npc_underwaterdweller",
                 "scarecrow",
-                "simpleshark"
+                "simpleshark",
+                "zombie"
             };
             DisplayNames.Add("bear", "Bear");
             DisplayNames.Add("boar", "Boar");
@@ -841,6 +842,7 @@ namespace Oxide.Plugins
             DisplayNames.Add("npc_underwaterdweller", "Underwater Dweller");
             DisplayNames.Add("scarecrow", "Scarecrow");
             DisplayNames.Add("simpleshark", "Shark");
+            DisplayNames.Add("zombie", "Zombie");
         }
 
         #endregion
@@ -865,6 +867,11 @@ namespace Oxide.Plugins
             if (entname.Contains("wolf"))
             {
                 entname = "wolf";
+            }
+
+            if (entity.ToString().Contains("Zombie"))
+            {
+                entname = "zombie";
             }
 
             return entname;
@@ -971,7 +978,7 @@ namespace Oxide.Plugins
             int i = 1;
             foreach (var item in entry)
             {
-                rewards = rewards + $"{(int)item.Amount}x {item.DisplayName}";
+                rewards = rewards + $"{(int)item.Amount} {item.DisplayName}";
                 if (i < entry.Count)
                     rewards = rewards + ", ";
                 i++;
@@ -985,7 +992,7 @@ namespace Oxide.Plugins
             var countItemRewards = rewards.Count(r => !string.IsNullOrEmpty(r.ShortName));
             var usedItemSlots = player.inventory.containerMain.itemList.Count + player.inventory.containerBelt.itemList.Count;
             if (usedItemSlots + countItemRewards > 30) return false;
-            
+
             foreach (var reward in rewards)
             {
                 if (reward.isCoins && Economics)
@@ -1030,7 +1037,7 @@ namespace Oxide.Plugins
                     if (item != null)
                     {
                         player.inventory.GiveItem(item);
-                        PopupMessage(player, $"{LA("qCancel", player.UserIDString)} {item.amount}x {item.info.displayName.translated} {LA("rewRet", player.UserIDString)}");
+                        PopupMessage(player, $"{LA("qCancel", player.UserIDString)} {item.amount} {item.info.displayName.translated} {LA("rewRet", player.UserIDString)}");
                     }
                 }
             }
@@ -1632,7 +1639,7 @@ namespace Oxide.Plugins
             string stats = $"{textPrimary}{LA("Status:", player.UserIDString)}</color> {questStatus}";
             stats += $"\n{textPrimary}{LA("Quest Type:", player.UserIDString)} </color> {textSecondary}{prog[entry.QuestName].Type}</color>";
             stats += $"\n{textPrimary}{LA("Desc", player.UserIDString)} </color>{textSecondary}{entry.Description}</color>";
-            stats += $"\n{textPrimary}{LA("Objective:", player.UserIDString)} </color>{textSecondary}{entry.AmountRequired}x {entry.ObjectiveName}</color>";
+            stats += $"\n{textPrimary}{LA("Objective:", player.UserIDString)} </color>{textSecondary}{entry.AmountRequired} {entry.ObjectiveName}</color>";
             stats += $"\n{textPrimary}{LA("Collected:", player.UserIDString)} </color>{textSecondary}{prog[entry.QuestName].AmountCollected}</color> {textPrimary}({percent * 100}%)</color>";
             stats += $"\n{textPrimary}{LA("Reward:", player.UserIDString)} </color>{textSecondary}{rewards}</color>";
 
@@ -1667,7 +1674,7 @@ namespace Oxide.Plugins
                     briefing = briefing + $"{textSecondary}{quest.Description}</color>\n\n";
                     briefing = briefing + $"{textPrimary}{LA("Destination:", player.UserIDString)} </color>{textSecondary}{target.Info.Name}\nX {target.Info.x}, Z {target.Info.z}</color>\n";
                     briefing = briefing + $"{textPrimary}{LA("Distance:", player.UserIDString)} </color>{textSecondary}{distance}M</color>\n";
-                    briefing = briefing + $"{textPrimary}{LA("Reward:", player.UserIDString)} </color>{textSecondary}{(int)rewardAmount}x {quest.Reward.DisplayName}</color>";
+                    briefing = briefing + $"{textPrimary}{LA("Reward:", player.UserIDString)} </color>{textSecondary}{(int)rewardAmount} {quest.Reward.DisplayName}</color>";
                     QUI.CreateLabel(ref Main, UIPanel, "", briefing, 20, "0.15 0.2", "0.85 1", TextAnchor.MiddleLeft);
 
                     QUI.CreateButton(ref Main, UIPanel, QUI.Color(configData.Colors.Button_Standard.Color, configData.Colors.Button_Standard.Alpha), LA("Cancel", player.UserIDString), 18, "0.2 0.05", "0.35 0.1", $"QUI_CancelDelivery");
@@ -1789,7 +1796,7 @@ namespace Oxide.Plugins
                         int i = 0;
                         foreach (var entry in ActiveEditors[player.userID].entry.Rewards)
                         {
-                            CreateDelEditButton(ref HelpMain, 0.1f, UIPanel, $"{entry.Amount}x {entry.DisplayName}", i, "", 0.35f);
+                            CreateDelEditButton(ref HelpMain, 0.1f, UIPanel, $"{entry.Amount} {entry.DisplayName}", i, "", 0.35f);
                             CreateDelEditButton(ref HelpMain, 0.72f, UIPanel, LA("Remove", player.UserIDString), i, $"QUI_RemoveReward {entry.Amount} {entry.DisplayName}");
                             i++;
                         }
@@ -1878,7 +1885,7 @@ namespace Oxide.Plugins
                     QUI.CreatePanel(ref HelpMain, UIPanel, QUI.Color(configData.Colors.Background_Light.Color, configData.Colors.Background_Light.Alpha), "0.01 0.02", "0.99 0.98", true);
                     QUI.CreateLabel(ref HelpMain, UIPanel, "", $"{textSecondary}{LA("delHelMult", player.UserIDString)}</color>\n{textPrimary}{LA("creHelRT", player.UserIDString)}</color>", 18, "0.05 0.82", "0.95 0.98");
                     int i = 0;
-                    if (Economics) CreateRewardTypeButton(ref HelpMain, UIPanel, "Coins (Economics)", "QUI_RewardType coins", i); i++;
+                    if (Economics) CreateRewardTypeButton(ref HelpMain, UIPanel, "$ (Economics)", "QUI_RewardType coins", i); i++;
                     if (ServerRewards) CreateRewardTypeButton(ref HelpMain, UIPanel, "RP (ServerRewards)", "QUI_RewardType rp", i); i++;
                     CreateRewardTypeButton(ref HelpMain, UIPanel, LA("Item", player.UserIDString), "QUI_RewardType item", i); i++;
                     if (HuntRPG) CreateRewardTypeButton(ref HelpMain, UIPanel, "XP (HuntRPG)", "QUI_RewardType huntxp", i); i++;
@@ -1962,7 +1969,7 @@ namespace Oxide.Plugins
                             briefing = briefing + $"{textSecondary}{quest.Description}</color>\n\n";
                             briefing = briefing + $"{textPrimary}{LA("Destination:", player.UserIDString)} </color>{textSecondary}{target.Info.Name}\nX {target.Info.x}, Z {target.Info.z}</color>\n";
                             briefing = briefing + $"{textPrimary}{LA("Distance:", player.UserIDString)} </color>{textSecondary}{distance}M</color>\n";
-                            briefing = briefing + $"{textPrimary}{LA("Reward:", player.UserIDString)} </color>{textSecondary}{(int)rewardAmount}x {quest.Reward.DisplayName}</color>";
+                            briefing = briefing + $"{textPrimary}{LA("Reward:", player.UserIDString)} </color>{textSecondary}{(int)rewardAmount} {quest.Reward.DisplayName}</color>";
 
                             var VendorUI = QUI.CreateElementContainer(UIPanel, QUI.Color(configData.Colors.Background_Dark.Color, configData.Colors.Background_Dark.Alpha), "0.4 0.3", "0.95 0.9", true);
                             QUI.CreatePanel(ref VendorUI, UIPanel, QUI.Color(configData.Colors.Background_Light.Color, configData.Colors.Background_Light.Alpha), "0.01 0.02", "0.99 0.98");
@@ -3068,7 +3075,7 @@ namespace Oxide.Plugins
                     else
                     {
                         if (string.IsNullOrEmpty(name))
-                            name = $"Delivery_{ vendors.DeliveryVendors.Count + 1}";
+                            name = $"Delivery_{vendors.DeliveryVendors.Count + 1}";
 
                         if (ActiveCreations.ContainsKey(player.userID))
                             ActiveCreations.Remove(player.userID);
@@ -3385,7 +3392,7 @@ namespace Oxide.Plugins
             {"creHelQD", "Enter a quest description"},
             {"creHelRT", "Choose a reward type"},
             {"creHelNewRew", "Select a reward to remove, or add a new one"},
-            {"Coins", "Coins"},
+            {"Coins", "$"},
             {"RP", "RP"},
             {"HuntXP", "XP"},
             {"Item", "Item"},
@@ -3438,7 +3445,7 @@ namespace Oxide.Plugins
             {"dAccep", "You have accepted the delivery mission"},
             {"canConf", "You have cancelled the delivery mission"},
             {"rewRec", "You have recieved"},
-            {"rewError", "Unable to issue your reward. Please contact an administrator / check if your inventory is full"},
+            {"rewError", "Unable to issue your reward. Your inventory may not have enough free slots. Otherwise, contact admin."},
             {"Quest NPCs:", "Quest NPCs:"},
             {"newVSucc", "You have successfully added a new Quest vendor"},
             {"noNPC", "Unable to find a valid NPC"},
